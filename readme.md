@@ -2,8 +2,8 @@ Employee Tracker
 ================
 
 Plan
-* 0.1 source script
-* 0.2 create form fields and pull input into script
+* 0.1 source script X
+* 0.2 create form fields and pull input into script X
 * 0.3 add info to DOM
 * 0.4 add total salary
 * 0.5 create delete button
