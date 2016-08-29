@@ -10,7 +10,12 @@ var addEmployee = function(){
     salary: document.getElementById('salaryIn').value
   });
   displayEmployees();
-};
+};//end addEmployee
+
+var deleteEmployee = function(index){
+  employees.splice(index, 1);
+  displayEmployees();
+};//end deleteEmployee
 
 var displayEmployees = function(){
   //clear form fields
@@ -21,47 +26,26 @@ var displayEmployees = function(){
   document.getElementById('salaryIn').value = '';
   //clear display
   document.getElementById('display').innerHTML = '';
+  document.getElementById('salaryPerMonth').innerHTML = '';
   //create variable for total salary
   var totalSalary = 0;
   for (var i = 0; i < employees.length; i++) {
     //create var for each employee for readability purposes
     var employee = employees[i];
-    //display employee data on DOM
-    document.getElementById('display').innerHTML += '<p>First Name: ' + employee.firstName + '</p>';
-    document.getElementById('display').innerHTML += '<p>Last Name: ' + employee.lastName + '</p>';
-    document.getElementById('display').innerHTML += '<p>Employee ID: ' + employee.empId + '</p>';
-    document.getElementById('display').innerHTML += '<p>Job Title: ' + employee.jobTitle + '</p>';
-    document.getElementById('display').innerHTML += '<p>Annual Salary: $' + employee.salary + '</p><br />';
+    //display employee data on DOM. Create div that displays inline-block to avoid excessive vertical stack
+    //looks ugly, but had to make it all one line of code to wrap it in a div
+    document.getElementById('display').innerHTML += '<div style="display:inline-block; width:250px;"><p>First Name: ' + employee.firstName + '</p><p>Last Name: ' + employee.lastName + '</p><p>Employee ID: ' + employee.empId + '</p><p>Job Title: ' + employee.jobTitle + '</p><p>Annual Salary: $' + employee.salary + '</p><button onclick="deleteEmployee(' + i + ')" id="employeeDeleteButton">Delete This Employee</button></div>';//end display add. Each emp will have a delete button.
+    //calculate totalSalary
     totalSalary += parseInt(employee.salary);
   }//end for
-  document.getElementById('display').innerHTML += '<p>Total salary per month: $' + totalSalary/12 + '</p>';
+  //calculate totalSalary per month and set its type to String
+  var salPerMonth = String(totalSalary/12);
+  //if salPerMonth is a float, then if there are more than two digits after the decimal, deconstruct the string and reconstruct it with only two digits after the decimal
+  if (salPerMonth.split('.')[1]){
+    if (salPerMonth.split('.')[1].length > 2) {
+      salPerMonth = salPerMonth.split('.')[0] + '.' + salPerMonth.split('.')[1].slice(0,2);
+    }//end nested if
+  }//end if
+  //display totalSalary per month
+  document.getElementById('salaryPerMonth').innerHTML += '<p>Total salary per month: $' + salPerMonth + '</p>';
 };//end addEmployee
-
-var deleteEmployee = function(){
-  //marshall variables
-  var firstName = document.getElementById('deleteFirstNameIn').value;
-  var lastName = document.getElementById('deleteLastNameIn').value;
-  //clear form fields
-  document.getElementById('deleteFirstNameIn').value = '';
-  document.getElementById('deleteLastNameIn').value = '';
-  //search for employee by lastName, confirm firstName matches, then remove employee from employees
-  var empMatches = [];
-  for (var i = 0; i < employees.length; i++) {
-    if (employees[i].lastName.toUpperCase() === lastName.toUpperCase()) {
-      if (employees[i].firstName.toUpperCase() === firstName.toUpperCase()) {
-        empMatches.push(employees[i]);
-      }//end inner if
-    }//end outer if
-  }//end for
-  switch (empMatches.length) {
-    case 0:
-      alert('No matching records. Please enter an existing employee name.')
-    case 1:
-      employees.splice(employees.indexOf(empMatches[0]), 1);
-      break;
-    default:
-      //add ability to choose which employee of multiple found to remove
-      console.log('More than one matching employee found. Feature coming soon.');
-  }
-  displayEmployees();
-};//end deleteEmployee
